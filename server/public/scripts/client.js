@@ -2,11 +2,12 @@
 
 $(document).ready(onReady);
 
+let jokeHistory;
+
 function onReady() {
     // console.log('jQuery ready');
-
     $('#addJokeButton').on('click', handleJokeButton)
-
+    updateJokesOnDom();
 }
 
 function handleJokeButton(event) {
@@ -32,13 +33,38 @@ function handleJokeButton(event) {
         url: '/joke',
         data: jokeObject
     }).then((response) => {
-        // likely want to add a function here to run the GET when it's back
+        updateJokesOnDom();
         console.log('POST was successful, response:', response)
     }).catch((error) => {
-        console.log('error caught:', error);
-        alert("ERROR!");
+        console.log('error on POST:', error);
+        alert("ERROR on POST!");
     })
-
-
 }
 
+function updateJokesOnDom() {
+    $.ajax({
+        method: 'GET',
+        url: '/jokes'
+    }).then((response) => {
+        jokeHistory = response;
+        // console.log('in GET at client - joke history updated!', jokeHistory); (didn't show more than 5 items in Chrome so will do another)
+        render(jokeHistory);
+    }).catch((error) => {
+        console.log('error on GET:', error);
+        alert("ERROR on GET!")
+    })
+}
+
+function render(array) {
+    $('#outputDiv').empty();
+
+    for (let joke of array) {
+        $('#outputDiv').append(`
+        <div>
+            <div>${joke.whoseJoke}'s Joke:</div>
+            <div class="question">${joke.jokeQuestion}</div>
+            <div class="answer">${joke.punchLine}</div>
+        </div>
+        `)
+    }
+}

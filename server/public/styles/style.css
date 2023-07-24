@@ -1,0 +1,8 @@
+div.question {
+    color: blue;
+}
+div.answer {
+    color: red;
+    font-size: 1.25em;
+    margin-left: 2%;
+}
